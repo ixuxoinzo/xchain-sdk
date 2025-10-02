@@ -1,7 +1,10 @@
 
-# 🚀 xChain SDK - Enterprise Multi-Chain Blockchain SDK
+# 🚀 xChain SDK - Multi-Chain Blockchain SDK
 
 **Your unified solution for Ethereum, L2 networks, and Solana**
+
+#Design Philosophy: Made for Developers
+The code in xchain-sdk is not only clean, but deliberately designed to be easy to understand. We name variables and functions explicitly so that developers can immediately understand what each line of code does. Our goal is for you to be productive in minutes, not hours.
 
 ---
 
