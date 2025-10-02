@@ -439,3 +439,10 @@ export interface ChainStatus {
   gasPrice: string;
   lastUpdate: number;
 }
+// ========== WALLET CONNECTION TYPES ==========
+export interface WalletConnection {
+  address: string;
+  chain: Chain;
+  connected: boolean;
+  provider?: any;
+}
