@@ -1,3 +1,4 @@
+
 <p align="center">
   <img src="assets/8fx443.jpg" alt="xChain SDK Logo" width="600"/>
 </p>
@@ -71,40 +72,122 @@ The code in xchain-sdk is not only clean, but deliberately designed to be easy t
 
 ## 🚀 Quick Start & Examples
 
-To quickly get started and see the SDK in action, explore the examples provided in the `examples/` directory.
+This repository includes a comprehensive demo script located at `demo.ts`.
 
-### Installation
+### Installation for Users
 
+To use the SDK in your own project, install it from NPM:
 ```bash
 npm install @ixuxoinzo/xchain-sdk
 
-Running Examples
- * Basic Usage: Demonstrates fundamental EVM and Solana operations.
-   # Navigate to the basic-usage example directory
-cd examples/basic-usage
-# Install dependencies (if needed)
+Running the Included Demo
+To run the complete demo script (demo.ts) from this repository:
+1. Setup
+First, install the dependencies from the project's root directory.
+# Install all dependencies from the project root
 npm install
-# Run the basic example
-npm start
 
-   Find the code at: examples/basic-usage/index.ts
- * Backend API Demo: Shows how to use the SDK for server-side operations.
-   # Navigate to the backend-api example directory
-cd examples/backend-api
-# Install dependencies (if needed)
-npm install
-# Run the backend API example
-npm start
+2. Run the Demo
+The unified demo script can be run in different modes from the project root:
+ * To run the core scripts (backend/CLI examples):
+   This will execute demonstrations for features like balance checks and contract calls directly in your terminal.
+<!-- end list -->
+npm run start
 
-   Find the code at: examples/backend-api/index.ts
- * Frontend dApp Demo: Illustrates integrating the SDK into a client-side application.
-   # Navigate to the frontend-dapp example directory
-cd examples/frontend-dapp
-# Install dependencies (if needed)
-npm install
-# Follow instructions in its README for running the dApp
+ * To run the interactive dApp (frontend demo):
+   This will start a local development server and open a web-based dApp in your browser to showcase client-side integration.
+<!-- end list -->
+npm run dev
 
-   Find the code at: examples/frontend-dapp/index.ts
+Example Output
+Running the npm run start command will produce a detailed output in your terminal, demonstrating the SDK's core functionalities:
+? XCHAIN SDK DEMO - MULTI-CHAIN BLOCKCHAIN OPERATIONS
+1. HYBRID SDK DEMO
+==================================================
+⏩  Skipping Frontend Wallet Detection (Node.js environment)
+2. BACKEND SDK DEMO
+==================================================
+🔐 Generated Demo Wallets:
+EVM Address: 0x54363A8eef4230f82AF38B0cFAACc0a0a24f47d3
+EVM Private Key: 0x82f1a9cedf5483c539...
+Solana Address: DV3FViuaD8KYycmU1umqW1ogXmSriLq883EatzF8FEjM
+Solana Private Key: 5qQBspU9EczFDfEwNxMm...
+✅  Backend SDK Initialized:
+EVM Address: 0x54363A8eef4230f82AF38B0cFAACc0a0a24f47d3
+Solana Address: DV3FViuaD8KYycmU1umqW1ogXmSriLq883EatzF8FEjM
+EVM Configured: true
+Solana Configured: true
+3. EVM OPERATIONS DEMO
+==================================================
+📍 EVM SDK Info:
+Address: 0x54363A8eef4230f82AF38B0cFAACc0a0a24f47d3
+Current Chain: ETHEREUM
+Network: {
+  chain: 'ETHEREUM',
+  chainId: 1,
+  name: 'Ethereum',
+  rpcUrl: '[https://eth.llamarpc.com](https://eth.llamarpc.com)',
+  explorer: '[https://etherscan.io](https://etherscan.io)',
+  nativeCurrency: { name: 'Ether', symbol: 'ETH', decimals: 18 }
+}
+📊 Read Operations:
+Current Block: 23492225
+Current Gas Price: 0.792025783 GWEI
+Balance: 0.0 ETH
+🔄 Chain Switching:
+✅  POLYGON: 0.0 MATIC
+✅  ARBITRUM: 0.0 ETH
+✅  BASE: 0.0 ETH
+4. SOLANA OPERATIONS DEMO
+==================================================
+📍 Solana SDK Info:
+Address: DV3FViuaD8KYycmU1umqW1ogXmSriLq883EatzF8FEjM
+Public Key: DV3FViuaD8KYycmU1umqW1ogXmSriLq883EatzF8FEjM
+📊 Solana Read Operations:
+SOL Balance: 0
+Recent Blockhash: CpmQDB5yuy5pMeHVhssG...
+Current Slot: 370762280
+5. MULTICALL OPERATIONS DEMO
+==================================================
+🧪 Testing Multicall:
+Multicall Results:
+✅  USDT: USDT
+✅  USDC: USDC
+✅  DAI: DAI
+6. HEALTH CHECKS
+==================================================
+EVM Health: ✅  Healthy
+EVM Latency: 254ms
+EVM Block: 23492225
+Solana Health: ✅  Healthy
+Solana Latency: 10ms
+Solana Slot: 370762282
+7. ERROR HANDLING DEMO
+==================================================
+Testing error handling...
+✅  Error handled properly: Native transfer failed: unconfigured name (value="0xInvalidAddress", code=UNCONFIGURED_NAME, version=6.15.0)
+8. ADVANCED FEATURES
+==================================================
+Gas Estimate: 21000
+Fee Data: {
+  gasPrice: '0.792025783',
+  maxFeePerGas: '1.583671641',
+  maxPriorityFeePerGas: '0.000379925'
+}
+🎉 DEMO SUMMARY
+==================================================
+✅  SDK Initialized Successfully
+✅  Multi-chain Support Working
+✅  Read Operations Functional
+✅  Error Handling Working
+✅  Advanced Features Accessible
+💡 NEXT STEPS:
+1. Use real private keys for actual transactions
+2. Configure RPC endpoints for better performance
+3. Add error handling and retry logic for production
+4. Implement proper security measures for private keys
+🚀 SDK READY FOR PRODUCTION!
+
 🔧 Configuration
 You can configure the SDK with custom RPC URLs and other options. Here's an example:
 import { EVMSDK, SolanaSDK } from '@ixuxoinzo/xchain-sdk';
