@@ -24,7 +24,7 @@ export class BackendSDK {
     if (this.config.evmPrivateKey) {
       this.evmSDK = new EVMSDK(
         this.config.evmPrivateKey, 
-        this.config.defaultChain || 'ETHEREUM',
+        (this.config as any).defaultChain || 'ETHEREUM',
         this.config.rpcUrls?.ETHEREUM
       );
     }
@@ -105,7 +105,7 @@ export class BackendSDK {
       throw new Error('Solana wallet not configured.');
     }
 
-    return await this.solanaSDK.getSOLBalance(address);
+    return await this.solanaSDK.getBalance(address);
   }
 
   async getTokenBalanceSolana(mint: string, address?: string): Promise<number> {
@@ -145,7 +145,7 @@ export class BackendSDK {
     // Get Solana balance
     if (this.solanaSDK) {
       try {
-        const balance = await this.solanaSDK.getSOLBalance(address);
+        const balance = await this.solanaSDK.getBalance(address);
         results.push({
           address,
           balance: balance.toString(),
