@@ -1,21 +1,18 @@
+```markdown
+# 🚀 XChain SDK - Multi-Chain Blockchain SDK
 
+**Enterprise-grade SDK for Ethereum, 13 L2 networks, and Solana**
 
-XChain SDK
+## 🌟 Features
 
-<div align="center">
+### 🛠 **Complete Multi-Chain Support**
+- **Ethereum** + **13 L2 Networks**: Optimism, Arbitrum, Base, Polygon, zkSync, Linea, Scroll, Mantle, Metis, Blast
+- **Solana** with full SPL token and NFT support
+- **Unified API** across all chains
 
-Multi-Chain SDK for Ethereum, 13 L2 Networks, and Solana
-One SDK for all chains - Simple, Fast, Production Ready
+## 🚀 Quick Start
 
-https://img.shields.io/badge/version-1.0.0-blue
-https://img.shields.io/badge/license-MIT-green
-https://img.shields.io/badge/chains-15+-orange
-
-</div>
-
-🚀 Quick Start
-
-Installation
+### Installation
 
 ```bash
 npm install @ixuxoinzo/xchain-sdk
@@ -23,7 +20,7 @@ npm install @ixuxoinzo/xchain-sdk
 
 Basic Usage
 
-```javascript
+```typescript
 import { XChainSDK } from '@ixuxoinzo/xchain-sdk';
 
 // Initialize SDK
@@ -33,7 +30,7 @@ const sdk = new XChainSDK();
 const tx = await sdk.transferToken(
   'ethereum',
   '0xYourAddress',
-  '0xRecipientAddress', 
+  '0xRecipientAddress',
   '0xA0b86991c6218b36c1d19D4a2e9Eb0cE3606eB48', // USDC
   '1000000' // 1 USDC
 );
@@ -41,100 +38,99 @@ const tx = await sdk.transferToken(
 console.log('Transaction:', tx.hash);
 ```
 
-📖 Complete Examples
+Frontend Usage (User Wallets)
 
-1. Multi-Chain Portfolio
+```typescript
+import { FrontendSDK } from '@ixuxoinzo/xchain-sdk';
 
-```javascript
-// Get balances across all chains
-const portfolio = await sdk.getMultiChainPortfolio('0xUserAddress');
+const sdk = new FrontendSDK();
+await sdk.connectEVM();
 
-console.log('Ethereum:', portfolio.ethereum.native, 'ETH');
-console.log('Polygon:', portfolio.polygon.native, 'MATIC'); 
-console.log('Solana:', portfolio.solana.native, 'SOL');
+// Transfer native token
+const tx = await sdk.transferNativeEVM('0xReceiver...', '0.001');
+console.log('Transaction:', tx.hash);
+```
+
+Backend Usage (Server Wallets)
+
+```typescript
+import { BackendSDK } from '@ixuxoinzo/xchain-sdk';
+
+const sdk = new BackendSDK({
+  evmPrivateKey: process.env.EVM_PRIVATE_KEY
+});
+
+// Transfer from server wallet
+const tx = await sdk.transferNativeEVM('0xUserAddress...', '0.01', 'POLYGON');
+console.log('Transaction:', tx.hash);
+```
+
+📚 Examples
+
+1. Multi-Chain Balance Check
+
+```typescript
+const balances = await sdk.getBalancesAllChains('0xUserAddress...');
+
+balances.forEach(({ chain, balance, symbol }) => {
+  console.log(`${chain}: ${balance} ${symbol}`);
+});
 ```
 
 2. NFT Operations
 
-```javascript
-// Mint NFT on Ethereum
+```typescript
+// Get NFT balance
+const nftBalance = await sdk.getNFTBalance('0xNFTContract...');
+
+// Mint NFT
 const nft = await sdk.mintNFT(
   'ethereum',
-  '0xNFTContract',
-  '0xRecipient',
+  '0xNFTContract...',
+  '0xRecipient...',
   'https://api.com/token/1'
 );
-
-// Get NFT balance
-const balance = await sdk.getNFTBalance('ethereum', '0xUser', '0xNFTContract');
 ```
 
 3. Smart Contract Interactions
 
-```javascript
+```typescript
 // Read contract
 const balance = await sdk.readContract(
   'ethereum',
-  '0xTokenAddress',
+  '0xContract...',
   'balanceOf',
-  ['0xUserAddress']
+  ['0xUser...']
 );
 
-// Write contract  
+// Write contract
 const result = await sdk.writeContract(
   'polygon',
-  '0xContract',
+  '0xContract...',
   'transfer',
-  ['0xRecipient', '1000000']
+  ['0xReceiver...', '1000000']
 );
 ```
 
 4. Event Listening
 
-```javascript
-// Listen to transfers
+```typescript
 sdk.onEvent(
   'ethereum',
-  '0xTokenAddress', 
+  '0xToken...',
   'Transfer',
-  (from, to, amount) => {
-    console.log(`Transfer: ${amount} from ${from} to ${to}`);
+  (from, to, value) => {
+    console.log(`Transfer: ${value} from ${from} to ${to}`);
   }
 );
 ```
 
-5. Batch Transactions
-
-```javascript
-import { BatchProcessor } from '@ixuxoinzo/xchain-sdk';
-
-const batch = new BatchProcessor(sdk);
-
-// Multiple transfers in one transaction
-const results = await batch.batchTransfers('ethereum', [
-  {
-    from: '0xSender',
-    to: '0xRecipient1', 
-    token: '0xUSDC',
-    amount: '1000000'
-  },
-  {
-    from: '0xSender',
-    to: '0xRecipient2',
-    token: '0xUSDC', 
-    amount: '2000000'
-  }
-]);
-```
-
 🔧 Configuration
 
-Basic Setup
-
-```javascript
+```typescript
 const sdk = new XChainSDK({
-  network: 'mainnet', // or 'testnet'
-  privateKey: process.env.PRIVATE_KEY, // optional
+  network: 'mainnet',
+  privateKey: process.env.PRIVATE_KEY,
   rpcUrls: {
     ethereum: process.env.ETH_RPC,
     polygon: process.env.POLYGON_RPC,
@@ -145,29 +141,17 @@ const sdk = new XChainSDK({
 
 🌐 Supported Chains
 
-· Ethereum
-· Optimism
-· Arbitrum
-· Base
-· Polygon
-· zkSync
-· StarkNet
-· Linea
-· Scroll
-· Mantle
-· Metis
-· Blast
-· Solana
+· Ethereum, Optimism, Arbitrum, Base, Polygon
+· zkSync, StarkNet, Linea, Scroll, Mantle
+· Metis, Blast, Solana
 
-📞 Need Help?
+📞 Support
 
-· Docs: https://github.com/ixuxoinzo/xchain-sdk
+· GitHub: https://github.com/ixuxoinzo/xchain-sdk
 · Issues: GitHub Issues
-· Email: ixuxoinzo@gmail.com
 
 📄 License
 
-MIT © ixuxoinzo
+MIT License
 
----
-
+```
