@@ -1,35 +1,36 @@
 import express from 'express';
-import { BackendSDK } from 'xchain-sdk-full';
+import cors from 'cors';
+import walletRoutes from './routes/wallet.js';
 
 const app = express();
+const PORT = process.env.PORT || 3000;
+
+// Middleware
+app.use(cors());
 app.use(express.json());
 
-// Initialize SDK
-const sdk = new BackendSDK({
-  evmPrivateKey: process.env.EVM_PRIVATE_KEY!
+// Routes
+app.use('/api/wallet', walletRoutes);
+
+// Basic route
+app.get('/', (req, res) => {
+  res.json({
+    message: '🚀 XChain SDK Wallet API',
+    version: '1.0.0',
+    endpoints: {
+      'GET /api/wallet/address': 'Get server wallet addresses',
+      'GET /api/wallet/balance/:chain/:address?': 'Get balance',
+      'POST /api/wallet/transfer': 'Transfer native tokens',
+      'POST /api/wallet/transfer-token': 'Transfer ERC20 tokens', 
+      'POST /api/wallet/transfer-sol': 'Transfer SOL',
+      'GET /api/wallet/health': 'Health check'
+    }
+  });
 });
 
-// API Routes
-app.get('/balance/:address', async (req, res) => {
-  try {
-    const balance = await sdk.getNativeBalanceEVM(req.params.address);
-    res.json({ address: req.params.address, balance });
-  } catch (error) {
-    res.status(500).json({ error: error.message });
-  }
-});
-
-app.post('/transfer', async (req, res) => {
-  try {
-    const { to, amount, chain = 'ETHEREUM' } = req.body;
-    const tx = await sdk.transferNativeEVM(to, amount, chain);
-    res.json({ success: true, transaction: tx });
-  } catch (error) {
-    res.status(500).json({ error: error.message });
-  }
-});
-
-app.listen(3000, () => {
-  console.log('🚀 Wallet API running on port 3000');
-  console.log('💰 Server Address:', sdk.getEVMAddress());
+// Start server
+app.listen(PORT, () => {
+  console.log('🚀 XChain SDK Wallet API started!');
+  console.log(`📍 http://localhost:${PORT}`);
+  console.log('📚 Check / for available endpoints');
 });
