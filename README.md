@@ -1,157 +1,133 @@
-```markdown
-# 🚀 XChain SDK - Multi-Chain Blockchain SDK
 
-**Enterprise-grade SDK for Ethereum, 13 L2 networks, and Solana**
+# 🚀 xChain SDK - Enterprise Multi-Chain Blockchain SDK
+
+**Your unified solution for Ethereum, L2 networks, and Solana**
+
+---
 
 ## 🌟 Features
 
-### 🛠 **Complete Multi-Chain Support**
-- **Ethereum** + **13 L2 Networks**: Optimism, Arbitrum, Base, Polygon, zkSync, Linea, Scroll, Mantle, Metis, Blast
-- **Solana** with full SPL token and NFT support
-- **Unified API** across all chains
+### 🛠 **Comprehensive Multi-Chain Support**
+- **Ethereum** and **Leading L2 Networks**: Optimism, Arbitrum, Base, Polygon, zkSync, Linea, Scroll, and more.
+- **Solana** with full SPL Token, NFT, and native SOL support.
+- **Unified API** for seamless interactions across all supported chains.
 
-## 🚀 Quick Start
+### 💰 **Native & Token Operations**
+- Get native coin (ETH, MATIC, SOL, etc.) balances.
+- Get ERC20/SPL token balances.
+- Transfer native coins.
+- Transfer ERC20/SPL tokens.
+- Fetch token information (name, symbol, decimals, total supply).
+
+### 🖼 **NFT Management**
+- Get ERC721/SPL NFT balances.
+- Get owner of a specific NFT.
+- Mint new ERC721/SPL NFTs (requires specific contract logic or metaplex setup).
+- View NFTs owned by an address.
+
+### 📝 **Smart Contract Interaction**
+- Read data from any EVM smart contract (e.g., `balanceOf`, `symbol`).
+- Write transactions to any EVM smart contract (e.g., `transfer`, `approve`).
+- Multicall functionality for efficient batching of read operations on EVM chains.
+
+### 📡 **Network Utilities**
+- Get current block number/slot.
+- Get current gas prices/fee data.
+- Estimate gas for EVM transactions.
+- Get transaction history for Solana.
+- Comprehensive health checks for RPC endpoints (latency, block sync).
+- Event listening for real-time updates on EVM chains.
+
+### 🔑 **Wallet Management**
+- Generate new random EVM and Solana wallets.
+- Securely manage private keys for backend operations.
+- Integrate with frontend wallet extensions (MetaMask, Phantom, etc.).
+
+---
+
+## 🚀 Quick Start & Examples
+
+To quickly get started and see the SDK in action, explore the examples provided in the `examples/` directory.
 
 ### Installation
 
 ```bash
-npm install @ixuxoinzo/xchain-sdk
-```
+npm install @your-org/xchain-sdk # Assuming your package is published under a scope
+# Or, if directly from GitHub:
+# npm install ixuxoinzo/xchain-sdk
 
-Basic Usage
+Running Examples
+ * Basic Usage: Demonstrates fundamental EVM and Solana operations.
+   # Navigate to the basic-usage example directory
+cd examples/basic-usage
+# Install dependencies (if needed)
+npm install
+# Run the basic example
+npm start
 
-```typescript
-import { XChainSDK } from '@ixuxoinzo/xchain-sdk';
+   Find the code at: examples/basic-usage/index.ts
+ * Backend API Demo: Shows how to use the SDK for server-side operations with private keys.
+   # Navigate to the backend-api example directory
+cd examples/backend-api
+# Install dependencies (if needed)
+npm install
+# Run the backend API example
+npm start
 
-// Initialize SDK
-const sdk = new XChainSDK();
+   Find the code at: examples/backend-api/index.ts
+ * Frontend dApp Demo: Illustrates integrating the SDK into a client-side application (requires a browser environment).
+   # Navigate to the frontend-dapp example directory
+cd examples/frontend-dapp
+# Install dependencies (if needed)
+npm install
+# Follow instructions in its README for running the dApp
 
-// Transfer tokens
-const tx = await sdk.transferToken(
-  'ethereum',
-  '0xYourAddress',
-  '0xRecipientAddress',
-  '0xA0b86991c6218b36c1d19D4a2e9Eb0cE3606eB48', // USDC
-  '1000000' // 1 USDC
-);
-
-console.log('Transaction:', tx.hash);
-```
-
-Frontend Usage (User Wallets)
-
-```typescript
-import { FrontendSDK } from '@ixuxoinzo/xchain-sdk';
-
-const sdk = new FrontendSDK();
-await sdk.connectEVM();
-
-// Transfer native token
-const tx = await sdk.transferNativeEVM('0xReceiver...', '0.001');
-console.log('Transaction:', tx.hash);
-```
-
-Backend Usage (Server Wallets)
-
-```typescript
-import { BackendSDK } from '@ixuxoinzo/xchain-sdk';
-
-const sdk = new BackendSDK({
-  evmPrivateKey: process.env.EVM_PRIVATE_KEY
-});
-
-// Transfer from server wallet
-const tx = await sdk.transferNativeEVM('0xUserAddress...', '0.01', 'POLYGON');
-console.log('Transaction:', tx.hash);
-```
-
-📚 Examples
-
-1. Multi-Chain Balance Check
-
-```typescript
-const balances = await sdk.getBalancesAllChains('0xUserAddress...');
-
-balances.forEach(({ chain, balance, symbol }) => {
-  console.log(`${chain}: ${balance} ${symbol}`);
-});
-```
-
-2. NFT Operations
-
-```typescript
-// Get NFT balance
-const nftBalance = await sdk.getNFTBalance('0xNFTContract...');
-
-// Mint NFT
-const nft = await sdk.mintNFT(
-  'ethereum',
-  '0xNFTContract...',
-  '0xRecipient...',
-  'https://api.com/token/1'
-);
-```
-
-3. Smart Contract Interactions
-
-```typescript
-// Read contract
-const balance = await sdk.readContract(
-  'ethereum',
-  '0xContract...',
-  'balanceOf',
-  ['0xUser...']
-);
-
-// Write contract
-const result = await sdk.writeContract(
-  'polygon',
-  '0xContract...',
-  'transfer',
-  ['0xReceiver...', '1000000']
-);
-```
-
-4. Event Listening
-
-```typescript
-sdk.onEvent(
-  'ethereum',
-  '0xToken...',
-  'Transfer',
-  (from, to, value) => {
-    console.log(`Transfer: ${value} from ${from} to ${to}`);
-  }
-);
-```
-
+   Find the code at: examples/frontend-dapp/index.ts
 🔧 Configuration
+You can configure the SDK with custom RPC URLs and other options. Here's an example:
+import { EVMSDK, SolanaSDK } from 'ixuxoinzo/xchain-sdk'; // Adjust imports
+import 'dotenv/config';
 
-```typescript
-const sdk = new XChainSDK({
-  network: 'mainnet',
-  privateKey: process.env.PRIVATE_KEY,
-  rpcUrls: {
-    ethereum: process.env.ETH_RPC,
-    polygon: process.env.POLYGON_RPC,
-    solana: process.env.SOLANA_RPC
-  }
+// For EVM
+const evm = new EVMSDK(process.env.EVM_PRIVATE_KEY!, 'ETHEREUM', {
+  rpcUrl: process.env.ETHEREUM_RPC_URL, // Optional: override default RPC
+  // Other Ethers.js provider options can be passed here
 });
-```
+
+// For Solana
+const solana = new SolanaSDK(process.env.SOLANA_PRIVATE_KEY!, {
+  rpcUrl: process.env.SOLANA_RPC_URL, // Optional: override default RPC
+  // Other Solana Connection options can be passed here
+});
 
 🌐 Supported Chains
-
-· Ethereum, Optimism, Arbitrum, Base, Polygon
-· zkSync, StarkNet, Linea, Scroll, Mantle
-· Metis, Blast, Solana
-
+EVM Chains
+ * Ethereum
+ * Optimism
+ * Arbitrum One
+ * Base
+ * Polygon POS
+ * Polygon zkEVM
+ * zkSync Era
+ * Linea
+ * Scroll
+ * Mantle
+ * Metis
+ * Blast
+Solana
+ * Solana Mainnet Beta
+ * Solana Devnet / Testnet support via RPC configuration
 📞 Support
-
-· GitHub: https://github.com/ixuxoinzo/xchain-sdk
-· Issues: GitHub Issues
-
+ * GitHub Repository: https://github.com/ixuxoinzo/xchain-sdk
+ * Report Issues: Use GitHub Issues
+🙏 Donations Supported
+If you find this SDK useful and would like to support its development, any contributions are greatly appreciated!
+EVM Chains (ETH, USDC, USDT, etc.):
+0xFBA061EA80d3593e3AF1430ad2050729b59362D9
+Solana (SOL, USDC, etc.):
+9ShXRhekCCnbN9bbQ9wXoq1KCfNQZ4uydXvmC9LPStBZ
 📄 License
-
 MIT License
 
-```
+
+
