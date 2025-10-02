@@ -72,7 +72,7 @@ export class HybridSDK {
 
   async getNativeBalance(address?: string, chain: Chain = 'ETHEREUM'): Promise<string> {
     if (this.useBackend && this.backend) {
-      return await this.backend.getNativeBalanceEVM(address || this.getCurrentAddress(), chain);
+      return await this.backend.getNativeBalanceEVM(address || await this.getCurrentAddress(), chain);
     } else {
       return await this.frontend.getNativeBalanceEVM(address);
     }
@@ -80,7 +80,7 @@ export class HybridSDK {
 
   async getTokenBalance(tokenAddress: string, address?: string, chain: Chain = 'ETHEREUM'): Promise<string> {
     if (this.useBackend && this.backend) {
-      return await this.backend.getTokenBalanceEVM(tokenAddress, address || this.getCurrentAddress(), chain);
+      return await this.backend.getTokenBalanceEVM(tokenAddress, address || await this.getCurrentAddress(), chain);
     } else {
       return await this.frontend.getTokenBalanceEVM(tokenAddress, address);
     }
