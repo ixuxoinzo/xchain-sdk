@@ -1,5 +1,5 @@
-import { ethers, BrowserProvider, JsonRpcSigner, Contract, BrowserProvider } from 'ethers';
-import { CHAINS, Chain } from './chains';
+import { ethers, BrowserProvider, JsonRpcSigner, Contract } from 'ethers';
+import { CHAINS, Chain } from './chains.js';
 import { TransactionResponse, WalletConnection, TokenInfo, NFTInfo } from './types';
 
 // Extended Window interface for Ethereum and Solana providers
