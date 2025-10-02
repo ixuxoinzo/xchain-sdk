@@ -1,35 +1,21 @@
-import { 
-  Connection, 
-  Keypair, 
-  PublicKey, 
-  Transaction, 
-  SystemProgram, 
-  LAMPORTS_PER_SOL, 
+import {
+  Connection,
+  Keypair,
+  PublicKey,
+  Transaction,
+  SystemProgram,
+  LAMPORTS_PER_SOL,
   sendAndConfirmTransaction,
   TransactionInstruction,
   VersionedTransaction,
   Message,
-  CompiledInstruction,
   AddressLookupTableAccount,
-  BlockheightBasedTransactionConfirmationStrategy,
-  NonceAccount,
-  NONCE_ACCOUNT_LENGTH,
   ComputeBudgetProgram,
   StakeProgram,
   VOTE_PROGRAM_ID,
-  BPF_LOADER_DEPRECATED_PROGRAM_ID,
-  BPF_LOADER_PROGRAM_ID,
-  Ed25519Program,
-  Secp256k1Program,
   ParsedAccountData,
-  PartiallyDecodedInstruction,
-  ParsedTransaction,
-  ParsedInstruction,
-  MessageAccountKeys,
   ConfirmedSignatureInfo,
   ConfirmedTransaction,
-  TokenBalance,
-  TransactionResponse,
   RpcResponseAndContext,
   SignatureResult,
   Context,
@@ -40,16 +26,15 @@ import {
   AccountInfo,
   Commitment,
   Finality,
-  SendTransactionOptions,
   Signer,
   TransactionSignature,
   Cluster,
   clusterApiUrl
 } from '@solana/web3.js';
 
-import { 
-  createTransferInstruction, 
-  getAssociatedTokenAddress, 
+import {
+  createTransferInstruction,
+  getAssociatedTokenAddress,
   createAssociatedTokenAccountInstruction,
   getAccount,
   getMint,
@@ -70,55 +55,25 @@ import {
   AccountLayout,
   MintLayout,
   NATIVE_MINT,
-  TokenAccountNotFoundError,
-  TokenInvalidAccountOwnerError,
-  TokenInvalidMintError,
-  TokenInvalidAccountSizeError,
-  TokenOwnerOffCurveError,
-  createInitializeAccountInstruction,
-  createInitializeMultisigInstruction,
-  MULTISIG_SIZE,
-  getMinimumBalanceForRentExemptMultisig,
-  createTransferCheckedInstruction,
-  createBurnCheckedInstruction,
-  createMintToCheckedInstruction,
-  createInitializeMintCloseAuthorityInstruction,
   unpackAccount,
   TOKEN_2022_PROGRAM_ID
 } from '@solana/spl-token';
 
-import { 
-  createCreateMetadataAccountV3Instruction, 
-  createUpdateMetadataAccountV2Instruction,
-  createCreateMasterEditionV3Instruction,
-  createVerifyCollectionInstruction,
-  createSetAndVerifyCollectionInstruction,
-  createVerifySizedCollectionItemInstruction,
-  createUnverifyCollectionInstruction,
-  createUnverifySizedCollectionItemInstruction,
-  DataV2,
-  Metadata,
+import {
   Metaplex,
   keypairIdentity,
   bundlrStorage,
-  toMetaplexFile,
-  FindNftsByOwnerOutput,
-  Sft,
-  Nft,
-  MetaplexPlugin,
-  WalletAdapter
+  toMetaplexFile
 } from '@metaplex-foundation/js';
 
-import { 
-  bs58 
-} from 'bs58';
+import bs58 from 'bs58';
 
-import { 
-  CHAINS, 
-  Chain 
-} from './chains';
+import {
+  CHAINS,
+  Chain
+} from './chains.js';
 
-import { 
+import {
   TransactionResponse as XChainTransactionResponse,
   TokenInfo,
   NFTInfo,
@@ -190,52 +145,43 @@ export interface SolanaProgramAccount {
   rentEpoch: number;
 }
 
-export interface SolanaTokenMetadata {
-  mint: string;
-  name: string;
-  symbol: string;
-  uri: string;
-  sellerFeeBasisPoints: number;
-  creators: Array<{
-    address: string;
-    verified: boolean;
-    share: number;
-  }>;
-  primarySaleHappened: boolean;
-  isMutable: boolean;
-  editionNonce?: number;
-  tokenStandard?: string;
-  collection?: {
-    verified: boolean;
-    key: string;
-  };
-  uses?: {
-    useMethod: 'burn' | 'multiple' | 'single';
-    remaining: number;
-    total: number;
-  };
-}
-
 export class SolanaSDK {
   private connection: Connection;
   private keypair: Keypair;
   private metaplex: Metaplex | null = null;
   private commitment: Commitment = 'confirmed';
 
-  constructor(privateKey: Uint8Array | string, customRpcUrl?: string, commitment: Commitment = 'confirmed') {
-    // Handle both Uint8Array and base58 string private keys
-    if (typeof privateKey === 'string') {
+  constructor(
+    privateKey: Uint8Array | string | { mnemonic: string; path?: string }, 
+    customRpcUrl?: string, 
+    commitment: Commitment = 'confirmed'
+  ) {
+    // Handle multiple input types
+    if (typeof privateKey === 'object' && 'mnemonic' in privateKey) {
+      // Handle mnemonic + path
+      const seed = this.deriveSeedFromMnemonic(privateKey.mnemonic, privateKey.path);
+      this.keypair = Keypair.fromSeed(seed);
+    } else if (typeof privateKey === 'string') {
+      // Handle base58 private key string
       this.keypair = Keypair.fromSecretKey(bs58.decode(privateKey));
     } else {
+      // Handle Uint8Array private key
       this.keypair = Keypair.fromSecretKey(privateKey);
     }
-    
+
     const rpcUrl = customRpcUrl || CHAINS.SOLANA.rpc;
     this.connection = new Connection(rpcUrl, commitment);
     this.commitment = commitment;
-    
+
     // Initialize Metaplex for NFT operations
     this.initializeMetaplex();
+  }
+
+  private deriveSeedFromMnemonic(mnemonic: string, path?: string): Uint8Array {
+    // Simple derivation for Solana - in production use proper HD wallet
+    const derivationString = mnemonic + (path || 'solana');
+    const seed = bs58.encode(Buffer.from(derivationString));
+    return Buffer.from(seed).subarray(0, 32);
   }
 
   private initializeMetaplex(): void {
@@ -253,7 +199,6 @@ export class SolanaSDK {
   }
 
   // ========== WALLET MANAGEMENT ==========
-
   static createRandom(): WalletInfo {
     const keypair = Keypair.generate();
     return {
@@ -263,12 +208,9 @@ export class SolanaSDK {
     };
   }
 
-  static fromMnemonic(mnemonic: string): WalletInfo {
-    // Note: Solana doesn't have built-in mnemonic support like Ethereum
-    // This is a simplified implementation - in production use proper key derivation
-    const seed = bs58.encode(Buffer.from(mnemonic));
+  static fromMnemonic(mnemonic: string, path?: string): WalletInfo {
+    const seed = bs58.encode(Buffer.from(mnemonic + (path || 'solana')));
     const keypair = Keypair.fromSeed(Buffer.from(seed).subarray(0, 32));
-    
     return {
       address: keypair.publicKey.toString(),
       privateKey: bs58.encode(keypair.secretKey),
@@ -300,7 +242,6 @@ export class SolanaSDK {
   }
 
   // ========== NATIVE SOL OPERATIONS ==========
-
   async transferSOL(to: string, amount: number, options: {
     memo?: string;
     computeUnitPrice?: number;
@@ -383,7 +324,7 @@ export class SolanaSDK {
     computeUnitLimit?: number;
   } = {}): Promise<SolanaTransferResponse[]> {
     const transactions: SolanaTransferResponse[] = [];
-    
+
     for (const recipient of recipients) {
       try {
         const result = await this.transferSOL(recipient.to, recipient.amount, options);
@@ -398,12 +339,11 @@ export class SolanaSDK {
           slot: 0,
           blockTime: 0,
           confirmationStatus: 'processed',
-          // @ts-ignore
-          error: error.message
-        });
+          error: (error as Error).message
+        } as any);
       }
     }
-    
+
     return transactions;
   }
 
@@ -413,13 +353,11 @@ export class SolanaSDK {
       pubkey,
       amount * LAMPORTS_PER_SOL
     );
-    
     await this.connection.confirmTransaction(signature, this.commitment);
     return signature;
   }
 
   // ========== SPL TOKEN OPERATIONS ==========
-
   async transferSPLToken(mint: string, to: string, amount: number, options: {
     decimals?: number;
     computeUnitPrice?: number;
@@ -428,7 +366,6 @@ export class SolanaSDK {
     try {
       const mintPubkey = new PublicKey(mint);
       const toPubkey = new PublicKey(to);
-      
       const fromTokenAccount = await getAssociatedTokenAddress(mintPubkey, this.keypair.publicKey);
       const toTokenAccount = await getAssociatedTokenAddress(mintPubkey, toPubkey);
 
@@ -511,10 +448,8 @@ export class SolanaSDK {
       const mintPubkey = new PublicKey(mint);
       const ownerPubkey = address ? new PublicKey(address) : this.keypair.publicKey;
       const tokenAccount = await getAssociatedTokenAddress(mintPubkey, ownerPubkey);
-      
       const accountInfo = await getAccount(this.connection, tokenAccount);
       const mintInfo = await getMint(this.connection, mintPubkey);
-      
       return Number(accountInfo.amount) / Math.pow(10, mintInfo.decimals);
     } catch {
       return 0;
@@ -526,7 +461,6 @@ export class SolanaSDK {
       const mintPubkey = new PublicKey(mint);
       const ownerPubkey = address ? new PublicKey(address) : this.keypair.publicKey;
       const tokenAccount = await getAssociatedTokenAddress(mintPubkey, ownerPubkey);
-      
       const accountInfo = await getAccount(this.connection, tokenAccount);
       return accountInfo.amount;
     } catch {
@@ -538,21 +472,20 @@ export class SolanaSDK {
     const mintPubkey = new PublicKey(mint);
     const mintInfo = await getMint(this.connection, mintPubkey);
     const balance = await this.getTokenBalance(mint);
-    
-    // Try to get metadata if available
+
     let name = 'Unknown Token';
     let symbol = 'UNKNOWN';
-    
+
     if (this.metaplex) {
       try {
         const metadata = await this.metaplex.nfts().findByMint({ mintAddress: mintPubkey });
         name = metadata.name;
         symbol = metadata.symbol;
       } catch (error) {
-        // Metadata not available, use defaults
+        // Metadata not available
       }
     }
-    
+
     return {
       address: mint,
       symbol,
@@ -617,7 +550,6 @@ export class SolanaSDK {
   } = {}): Promise<string> {
     const mintPubkey = new PublicKey(mint);
     const toPubkey = new PublicKey(to);
-    
     const tokenAccount = await getOrCreateAssociatedTokenAccount(
       this.connection,
       this.keypair,
@@ -664,7 +596,6 @@ export class SolanaSDK {
   } = {}): Promise<string> {
     const mintPubkey = new PublicKey(mint);
     const tokenAccount = await getAssociatedTokenAddress(mintPubkey, this.keypair.publicKey);
-
     const mintInfo = await getMint(this.connection, mintPubkey);
     const adjustedAmount = BigInt(Math.floor(amount * Math.pow(10, mintInfo.decimals)));
 
@@ -705,7 +636,6 @@ export class SolanaSDK {
     const mintPubkey = new PublicKey(mint);
     const delegatePubkey = new PublicKey(delegate);
     const tokenAccount = await getAssociatedTokenAddress(mintPubkey, this.keypair.publicKey);
-
     const mintInfo = await getMint(this.connection, mintPubkey);
     const adjustedAmount = BigInt(Math.floor(amount * Math.pow(10, mintInfo.decimals)));
 
@@ -767,7 +697,6 @@ export class SolanaSDK {
   }
 
   // ========== NFT OPERATIONS ==========
-
   async createNFT(metadata: {
     name: string;
     symbol: string;
@@ -787,18 +716,15 @@ export class SolanaSDK {
     }
 
     try {
-      // Convert image to Metaplex file if it's a string URL
       let imageFile;
       if (typeof metadata.image === 'string') {
-        // For URL, we'll use it directly in URI
         imageFile = metadata.image;
       } else {
-        // For File object, upload to Arweave
-        imageFile = toMetaplexFile(metadata.image, 'image.png');
+        imageFile = toMetaplexFile(await this.fileToBuffer(metadata.image), 'image.png');
       }
 
       const { nft, response } = await this.metaplex.nfts().create({
-        uri: "", // Will be set after upload
+        uri: "",
         name: metadata.name,
         symbol: metadata.symbol,
         sellerFeeBasisPoints: metadata.seller_fee_basis_points || 0,
@@ -812,7 +738,6 @@ export class SolanaSDK {
         collection: options.collection || null,
       });
 
-      // Upload metadata
       const { uri } = await this.metaplex.nfts().uploadMetadata({
         name: metadata.name,
         symbol: metadata.symbol,
@@ -830,7 +755,6 @@ export class SolanaSDK {
         },
       });
 
-      // Update NFT with actual URI
       await this.metaplex.nfts().update({
         nftOrSft: nft,
         uri: uri,
@@ -858,6 +782,21 @@ export class SolanaSDK {
     }
   }
 
+  private async fileToBuffer(file: File): Promise<Buffer> {
+    return new Promise((resolve, reject) => {
+      const reader = new FileReader();
+      reader.onload = () => {
+        if (reader.result) {
+          resolve(Buffer.from(reader.result as ArrayBuffer));
+        } else {
+          reject(new Error('Failed to read file'));
+        }
+      };
+      reader.onerror = reject;
+      reader.readAsArrayBuffer(file);
+    });
+  }
+
   async transferNFT(mint: string, to: string): Promise<SolanaTokenTransferResponse> {
     return await this.transferSPLToken(mint, to, 1);
   }
@@ -876,20 +815,19 @@ export class SolanaSDK {
       if (nft.model === 'metadata') {
         try {
           const fullNft = await this.metaplex.nfts().findByMint({ mintAddress: nft.mintAddress });
-          
+          const nftJson = (fullNft as any).json;
           nftInfos.push({
             contractAddress: nft.mintAddress.toString(),
-            tokenId: 0, // Solana NFTs don't have token IDs in the same way
+            tokenId: 0,
             owner: ownerPubkey.toString(),
             tokenURI: nft.uri,
             name: nft.name,
             symbol: nft.symbol || '',
-            image: fullNft.json?.image || '',
-            description: fullNft.json?.description || '',
-            attributes: fullNft.json?.attributes || []
+            image: nftJson?.image || '',
+            description: nftJson?.description || '',
+            attributes: nftJson?.attributes || []
           });
         } catch (error) {
-          // Skip NFTs that can't be fully loaded
           continue;
         }
       }
@@ -906,6 +844,20 @@ export class SolanaSDK {
     const mintPubkey = new PublicKey(mint);
     const nft = await this.metaplex.nfts().findByMint({ mintAddress: mintPubkey });
 
+    // FIX: Convert TokenStandard to string
+    const tokenStandard = nft.tokenStandard ? (nft.tokenStandard as any).__kind || nft.tokenStandard.toString() : undefined;
+
+    // FIX: Safe useMethod conversion
+    let useMethod: 'burn' | 'multiple' | 'single' | undefined;
+    if (nft.uses) {
+      const method = nft.uses.useMethod as any;
+      if (method === 'burn' || method === 'multiple' || method === 'single') {
+        useMethod = method;
+      } else if (typeof method === 'string') {
+        useMethod = method as 'burn' | 'multiple' | 'single';
+      }
+    }
+
     return {
       mint: nft.address.toString(),
       name: nft.name,
@@ -919,14 +871,14 @@ export class SolanaSDK {
       })),
       primarySaleHappened: nft.primarySaleHappened,
       isMutable: nft.isMutable,
-      editionNonce: nft.editionNonce,
-      tokenStandard: nft.tokenStandard,
+      editionNonce: nft.editionNonce || undefined,
+      tokenStandard: tokenStandard,
       collection: nft.collection ? {
         verified: nft.collection.verified,
         key: nft.collection.address.toString()
       } : undefined,
       uses: nft.uses ? {
-        useMethod: nft.uses.useMethod as 'burn' | 'multiple' | 'single',
+        useMethod: useMethod!,
         remaining: nft.uses.remaining,
         total: nft.uses.total
       } : undefined
@@ -962,11 +914,10 @@ export class SolanaSDK {
   }
 
   // ========== ACCOUNT MANAGEMENT ==========
-
   async getAccountInfo(address: string): Promise<SolanaAccountInfo> {
     const pubkey = new PublicKey(address);
     const accountInfo = await this.connection.getAccountInfo(pubkey);
-    
+
     if (!accountInfo) {
       throw new Error('Account not found');
     }
@@ -994,19 +945,18 @@ export class SolanaSDK {
       try {
         const accountInfo = await getAccount(this.connection, account.pubkey);
         const mintInfo = await getMint(this.connection, accountInfo.mint);
-        
+
         accounts.push({
           address: account.pubkey.toString(),
           mint: accountInfo.mint.toString(),
           owner: accountInfo.owner.toString(),
           amount: Number(accountInfo.amount) / Math.pow(10, mintInfo.decimals),
           decimals: mintInfo.decimals,
-          state: accountInfo.isInitialized ? 
-            (accountInfo.isFrozen ? 'frozen' : 'initialized') : 
+          state: accountInfo.isInitialized ?
+            (accountInfo.isFrozen ? 'frozen' : 'initialized') :
             'uninitialized'
         });
       } catch (error) {
-        // Skip accounts that can't be parsed
         continue;
       }
     }
@@ -1014,7 +964,7 @@ export class SolanaSDK {
     return accounts;
   }
 
-  async getProgramAccounts(programId: string, filters?: (DataSizeFilter | MemcmpFilter)[]): Promise<SolanaProgramAccount[]> {
+  async getProgramAccounts(programId: string, filters?: (DataSizeFilter | MemcmpFilter)[]): Promise<any[]> {
     const programPubkey = new PublicKey(programId);
     const accounts = await this.connection.getProgramAccounts(programPubkey, {
       filters,
@@ -1029,12 +979,7 @@ export class SolanaSDK {
         lamports: account.account.lamports,
         data: account.account.data,
         rentEpoch: account.account.rentEpoch
-      },
-      executable: account.account.executable,
-      owner: account.account.owner.toString(),
-      lamports: account.account.lamports,
-      data: account.account.data,
-      rentEpoch: account.account.rentEpoch
+      }
     }));
   }
 
@@ -1095,16 +1040,20 @@ export class SolanaSDK {
   }
 
   // ========== TRANSACTION OPERATIONS ==========
-
   async getTransaction(signature: string): Promise<SolanaTransaction> {
     const tx = await this.connection.getTransaction(signature, {
       maxSupportedTransactionVersion: 0,
-      commitment: this.commitment
+      commitment: this.commitment as Finality
     });
 
     if (!tx) {
       throw new Error('Transaction not found');
     }
+
+    const memoInstruction = tx.transaction.message.compiledInstructions.find(ix => {
+      const programId = tx.transaction.message.staticAccountKeys[ix.programIdIndex];
+      return programId.toString() === 'MemoSq4gqABAXKb96qnH8TysNcWxMyWCqXgDLGmfcHr';
+    });
 
     return {
       signature: tx.transaction.signatures[0],
@@ -1112,18 +1061,10 @@ export class SolanaSDK {
       blockTime: tx.blockTime || 0,
       confirmationStatus: 'confirmed',
       err: tx.meta?.err || null,
-      memo: tx.transaction.message.compiledInstructions.find(ix => 
-        ix.programIdIndex === tx.transaction.message.staticAccountKeys.findIndex(pk => 
-          pk.toString() === 'MemoSq4gqABAXKb96qnH8TysNcWxMyWCqXgDLGmfcHr'
-        )
-      ) ? Buffer.from(tx.transaction.message.compiledInstructions.find(ix => 
-        ix.programIdIndex === tx.transaction.message.staticAccountKeys.findIndex(pk => 
-          pk.toString() === 'MemoSq4gqABAXKb96qnH8TysNcWxMyWCqXgDLGmfcHr'
-        )
-      )!.data).toString('utf8') : undefined,
+      memo: memoInstruction ? Buffer.from(memoInstruction.data).toString('utf8') : undefined,
       instructions: tx.transaction.message.compiledInstructions.map(ix => ({
         programId: tx.transaction.message.staticAccountKeys[ix.programIdIndex].toString(),
-        accounts: ix.accountKeyIndexes.map(idx => 
+        accounts: ix.accountKeyIndexes.map(idx =>
           tx.transaction.message.staticAccountKeys[idx].toString()
         ),
         data: Buffer.from(ix.data).toString('base64')
@@ -1135,8 +1076,7 @@ export class SolanaSDK {
     const pubkey = address ? new PublicKey(address) : this.keypair.publicKey;
     const signatures = await this.connection.getSignaturesForAddress(
       pubkey,
-      { limit },
-      this.commitment
+      { limit }
     );
 
     const transactions = await Promise.all(
@@ -1169,7 +1109,6 @@ export class SolanaSDK {
   }
 
   // ========== STAKE OPERATIONS ==========
-
   async createStakeAccount(amount: number, validator: string): Promise<string> {
     const stakeAccount = Keypair.generate();
     const validatorPubkey = new PublicKey(validator);
@@ -1224,7 +1163,7 @@ export class SolanaSDK {
         filters: [
           {
             memcmp: {
-              offset: 12, // Offset for authorized staker
+              offset: 12,
               bytes: ownerPubkey.toBase58(),
             },
           },
@@ -1242,7 +1181,7 @@ export class SolanaSDK {
           address: account.pubkey.toString(),
           balance: account.account.lamports / LAMPORTS_PER_SOL,
           stake: parseInt(info.stake.delegation.stake) / LAMPORTS_PER_SOL,
-          rewards: 0, // Would need to calculate from epoch info
+          rewards: 0,
           activationEpoch: parseInt(info.stake.delegation.activationEpoch),
           deactivationEpoch: parseInt(info.stake.delegation.deactivationEpoch),
           voter: info.stake.delegation.voter,
@@ -1254,7 +1193,6 @@ export class SolanaSDK {
   }
 
   // ========== NETWORK INFORMATION ==========
-
   async getRecentBlockhash(): Promise<string> {
     const { blockhash } = await this.connection.getLatestBlockhash(this.commitment);
     return blockhash;
@@ -1286,28 +1224,28 @@ export class SolanaSDK {
   }
 
   async getLeaderSchedule(epoch?: number): Promise<any> {
-    return await this.connection.getLeaderSchedule(epoch);
+    return await this.connection.getLeaderSchedule();
   }
 
   async getVoteAccounts(): Promise<SolanaVoteAccount[]> {
     const voteAccounts = await this.connection.getVoteAccounts();
-    
+
     const accounts: SolanaVoteAccount[] = [
       ...voteAccounts.current.map(acc => ({
         address: acc.votePubkey,
         validator: acc.nodePubkey,
         commission: acc.commission,
         votes: acc.activatedStake,
-        rootSlot: acc.rootSlot,
-        epoch: acc.epochVoteAccount? acc.epochVoteAccount.epoch : 0,
+        rootSlot: (acc as any).rootSlot || 0,
+        epoch: acc.epochCredits.length > 0 ? acc.epochCredits[acc.epochCredits.length - 1][0] : 0,
       })),
       ...voteAccounts.delinquent.map(acc => ({
         address: acc.votePubkey,
         validator: acc.nodePubkey,
         commission: acc.commission,
         votes: acc.activatedStake,
-        rootSlot: acc.rootSlot,
-        epoch: acc.epochVoteAccount? acc.epochVoteAccount.epoch : 0,
+        rootSlot: (acc as any).rootSlot || 0,
+        epoch: acc.epochCredits.length > 0 ? acc.epochCredits[acc.epochCredits.length - 1][0] : 0,
       }))
     ];
 
@@ -1315,9 +1253,9 @@ export class SolanaSDK {
   }
 
   // ========== FEE CALCULATION ==========
-
-  async getFeeForMessage(message: Message): Promise<number> {
-    return await this.connection.getFeeForMessage(message);
+  async getFeeForMessage(message: Message): Promise<number | null> {
+    const result = await this.connection.getFeeForMessage(message);
+    return result.value;
   }
 
   async getRecentPrioritizationFees(): Promise<Array<{ slot: number; prioritizationFee: number }>> {
@@ -1328,16 +1266,12 @@ export class SolanaSDK {
     includeAllPriorityFee?: boolean;
     lookbackSlots?: number;
   }): Promise<number> {
-    // This would typically use a custom method or RPC call
-    // For now, return a conservative estimate
     const fees = await this.getRecentPrioritizationFees();
-    if (fees.length === 0) return 1000; // Default micro-lamport fee
-    
+    if (fees.length === 0) return 1000;
     return Math.ceil(fees.reduce((sum, fee) => sum + fee.prioritizationFee, 0) / fees.length);
   }
 
   // ========== COMPUTE BUDGET ==========
-
   async setComputeUnitPrice(microLamports: number): Promise<TransactionInstruction> {
     return ComputeBudgetProgram.setComputeUnitPrice({ microLamports });
   }
@@ -1347,7 +1281,6 @@ export class SolanaSDK {
   }
 
   // ========== TOKEN 2022 PROGRAM ==========
-
   async createToken2022(decimals: number = 9, options: {
     mintAuthority?: PublicKey;
     freezeAuthority?: PublicKey;
@@ -1391,7 +1324,6 @@ export class SolanaSDK {
   }
 
   // ========== BATCH OPERATIONS ==========
-
   async getMultipleBalances(addresses: string[]): Promise<BalanceResult[]> {
     const balances = await Promise.all(
       addresses.map(async (address) => ({
@@ -1401,6 +1333,7 @@ export class SolanaSDK {
         symbol: 'SOL'
       }))
     );
+
     return balances;
   }
 
@@ -1412,11 +1345,11 @@ export class SolanaSDK {
         token: await this.getTokenInfo(mint)
       }))
     );
+
     return balances;
   }
 
   // ========== UTILITY FUNCTIONS ==========
-
   isValidAddress(address: string): boolean {
     try {
       new PublicKey(address);
@@ -1433,10 +1366,9 @@ export class SolanaSDK {
   async getAccountInfoBatch(addresses: string[]): Promise<(SolanaAccountInfo | null)[]> {
     const pubkeys = addresses.map(addr => new PublicKey(addr));
     const accounts = await this.connection.getMultipleAccountsInfo(pubkeys);
-    
+
     return accounts.map((account, index) => {
       if (!account) return null;
-      
       return {
         address: addresses[index],
         lamports: account.lamports,
@@ -1459,23 +1391,21 @@ export class SolanaSDK {
     const accounts = await this.connection.getParsedTokenAccountsByOwner(ownerPubkey, {
       programId: TOKEN_PROGRAM_ID
     });
-    
+
     return accounts.value;
   }
 
   // ========== TRANSACTION HISTORY ==========
-
   async getTransactionHistory(limit: number = 10, address?: string): Promise<SolanaTransaction[]> {
     return await this.getRecentTransactions(limit, address);
   }
 
   async getSignaturesForAddress(address: string, limit: number = 10): Promise<ConfirmedSignatureInfo[]> {
     const pubkey = new PublicKey(address);
-    return await this.connection.getSignaturesForAddress(pubkey, { limit }, this.commitment);
+    return await this.connection.getSignaturesForAddress(pubkey, { limit });
   }
 
   // ========== EVENT SUBSCRIPTION ==========
-
   onAccountChange(address: string, callback: (accountInfo: AccountInfo<Buffer>) => void): number {
     const pubkey = new PublicKey(address);
     return this.connection.onAccountChange(pubkey, callback, this.commitment);
@@ -1483,11 +1413,14 @@ export class SolanaSDK {
 
   onProgramAccountChange(programId: string, callback: (accountInfo: AccountInfo<Buffer>, pubkey: PublicKey) => void): number {
     const pubkey = new PublicKey(programId);
-    return this.connection.onProgramAccountChange(pubkey, callback, this.commitment);
+    return this.connection.onProgramAccountChange(pubkey, (keyedAccountInfo) => {
+      callback(keyedAccountInfo.accountInfo, keyedAccountInfo.accountId);
+    }, this.commitment);
   }
 
   onLogs(callback: (logs: Logs, context: Context) => void): number {
-    return this.connection.onLogs(callback, this.commitment);
+    const filter: any = { commitment: this.commitment };
+    return this.connection.onLogs(filter, callback);
   }
 
   onSlotChange(callback: (slotInfo: { slot: number; parent: number }) => void): number {
@@ -1499,7 +1432,6 @@ export class SolanaSDK {
   }
 
   // ========== HEALTH CHECK ==========
-
   async healthCheck(): Promise<{ healthy: boolean; latency: number; slot: number }> {
     const startTime = Date.now();
     try {
@@ -1520,14 +1452,12 @@ export class SolanaSDK {
   }
 
   // ========== ERROR HANDLING ==========
-
   static isSolanaError(error: any): boolean {
     return error && (error.logs || error.signature);
   }
 
   static getErrorCode(error: any): string {
     if (error.logs) {
-      // Try to extract error code from logs
       const errorLog = error.logs.find((log: string) => log.includes('Error:'));
       return errorLog || 'UNKNOWN_SOLANA_ERROR';
     }
@@ -1546,7 +1476,19 @@ export class SolanaUtils {
     try {
       const metaplex = Metaplex.make(connection);
       const nft = await metaplex.nfts().findByMint({ mintAddress: new PublicKey(mint) });
-      
+
+      const tokenStandard = nft.tokenStandard ? (nft.tokenStandard as any).__kind || nft.tokenStandard.toString() : undefined;
+
+      let useMethod: 'burn' | 'multiple' | 'single' | undefined;
+      if (nft.uses) {
+        const method = nft.uses.useMethod as any;
+        if (method === 'burn' || method === 'multiple' || method === 'single') {
+          useMethod = method;
+        } else if (typeof method === 'string') {
+          useMethod = method as 'burn' | 'multiple' | 'single';
+        }
+      }
+
       return {
         mint: nft.address.toString(),
         name: nft.name,
@@ -1560,14 +1502,14 @@ export class SolanaUtils {
         })),
         primarySaleHappened: nft.primarySaleHappened,
         isMutable: nft.isMutable,
-        editionNonce: nft.editionNonce,
-        tokenStandard: nft.tokenStandard,
+        editionNonce: nft.editionNonce || undefined,
+        tokenStandard: tokenStandard,
         collection: nft.collection ? {
           verified: nft.collection.verified,
           key: nft.collection.address.toString()
         } : undefined,
         uses: nft.uses ? {
-          useMethod: nft.uses.useMethod as 'burn' | 'multiple' | 'single',
+          useMethod: useMethod!,
           remaining: nft.uses.remaining,
           total: nft.uses.total
         } : undefined
@@ -1606,3 +1548,4 @@ export class SolanaUtils {
     return Math.floor(parseFloat(amount) * Math.pow(10, decimals));
   }
 }
+
