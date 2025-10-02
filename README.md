@@ -1,5 +1,4 @@
-
-# <p align="center">
+<p align="center">
   <img src="assets/8fx443.jpg" alt="xChain SDK Logo" width="600"/>
 </p>
 
@@ -23,10 +22,9 @@
 
 ---
 
+# 🚀 xChain SDK - Multi-Chain Blockchain SDK
 
-**Your unified solution for Ethereum, L2 networks, and Solana**
-
-#Design Philosophy: Made for Developers
+## Design Philosophy: Made for Developers
 The code in xchain-sdk is not only clean, but deliberately designed to be easy to understand. We name variables and functions explicitly so that developers can immediately understand what each line of code does. Our goal is for you to be productive in minutes, not hours.
 
 ---
@@ -78,9 +76,7 @@ To quickly get started and see the SDK in action, explore the examples provided 
 ### Installation
 
 ```bash
-npm install @your-org/xchain-sdk # Assuming your package is published under a scope
-# Or, if directly from GitHub:
-# npm install ixuxoinzo/xchain-sdk
+npm install @ixuxoinzo/xchain-sdk
 
 Running Examples
  * Basic Usage: Demonstrates fundamental EVM and Solana operations.
@@ -92,7 +88,7 @@ npm install
 npm start
 
    Find the code at: examples/basic-usage/index.ts
- * Backend API Demo: Shows how to use the SDK for server-side operations with private keys.
+ * Backend API Demo: Shows how to use the SDK for server-side operations.
    # Navigate to the backend-api example directory
 cd examples/backend-api
 # Install dependencies (if needed)
@@ -101,7 +97,7 @@ npm install
 npm start
 
    Find the code at: examples/backend-api/index.ts
- * Frontend dApp Demo: Illustrates integrating the SDK into a client-side application (requires a browser environment).
+ * Frontend dApp Demo: Illustrates integrating the SDK into a client-side application.
    # Navigate to the frontend-dapp example directory
 cd examples/frontend-dapp
 # Install dependencies (if needed)
@@ -111,19 +107,17 @@ npm install
    Find the code at: examples/frontend-dapp/index.ts
 🔧 Configuration
 You can configure the SDK with custom RPC URLs and other options. Here's an example:
-import { EVMSDK, SolanaSDK } from 'ixuxoinzo/xchain-sdk'; // Adjust imports
+import { EVMSDK, SolanaSDK } from '@ixuxoinzo/xchain-sdk';
 import 'dotenv/config';
 
 // For EVM
 const evm = new EVMSDK(process.env.EVM_PRIVATE_KEY!, 'ETHEREUM', {
   rpcUrl: process.env.ETHEREUM_RPC_URL, // Optional: override default RPC
-  // Other Ethers.js provider options can be passed here
 });
 
 // For Solana
 const solana = new SolanaSDK(process.env.SOLANA_PRIVATE_KEY!, {
   rpcUrl: process.env.SOLANA_RPC_URL, // Optional: override default RPC
-  // Other Solana Connection options can be passed here
 });
 
 🌐 Supported Chains
@@ -148,12 +142,10 @@ Solana
  * Report Issues: Use GitHub Issues
 🙏 Donations Supported
 If you find this SDK useful and would like to support its development, any contributions are greatly appreciated!
-EVM Chains (ETH, USDC, USDT, etc.):
-0xFBA061EA80d3593e3AF1430ad2050729b59362D9
-Solana (SOL, USDC, etc.):
-9ShXRhekCCnbN9bbQ9wXoq1KCfNQZ4uydXvmC9LPStBZ
+ * EVM Chains (ETH, USDC, USDT, etc.):
+   0xFBA061EA80d3593e3AF1430ad2050729b59362D9
+ * Solana (SOL, USDC, etc.):
+   9ShXRhekCCnbN9bbQ9wXoq1KCfNQZ4uydXvmC9LPStBZ
 📄 License
 MIT License
-
-
 
