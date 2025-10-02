@@ -1,5 +1,28 @@
 
-# 🚀 xChain SDK - Multi-Chain Blockchain SDK
+# <p align="center">
+  <img src="assets/8fx443.jpg" alt="xChain SDK Logo" width="600"/>
+</p>
+
+<h1 align="center">xChain SDK</h1>
+
+<p align="center">
+  Your unified solution for Ethereum, L2 networks, and Solana.
+</p>
+
+<p align="center">
+    <a href="https://www.npmjs.com/package/@ixuxoinzo/xchain-sdk">
+    <img src="https://img.shields.io/npm/v/@ixuxoinzo/xchain-sdk.svg" alt="NPM Version">
+  </a>
+  <a href="https://github.com/ixuxoinzo/xchain-sdk/blob/main/LICENSE">
+    <img src="https://img.shields.io/npm/l/@ixuxoinzo/xchain-sdk.svg" alt="License">
+  </a>
+    <a href="https://github.com/ixuxoinzo/xchain-sdk/stargazers">
+    <img src="https://img.shields.io/github/stars/ixuxoinzo/xchain-sdk.svg" alt="GitHub Stars">
+  </a>
+</p>
+
+---
+
 
 **Your unified solution for Ethereum, L2 networks, and Solana**
 
