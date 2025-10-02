@@ -7,7 +7,7 @@
   "types": "dist/index.d.ts",
   "scripts": {
     "build": "tsc",
-    "dev": "ts-node src/demo.ts",
+    "dev": "node --loader ts-node/esm src/demo.ts",
     "start": "node dist/demo.js",
     "test": "ts-node src/demo.ts",
     "demo": "npm run dev",
@@ -33,22 +33,22 @@
   "author": "XChain Team",
   "license": "MIT",
   "dependencies": {
-    "ethers": "^6.0.0",
-    "@solana/web3.js": "^1.87.0",
-    "@solana/spl-token": "^0.3.9",
     "@metaplex-foundation/js": "^0.19.0",
-    "bs58": "^5.0.0",
+    "@solana/spl-token": "^0.3.9",
+    "@solana/web3.js": "^1.87.0",
     "axios": "^1.6.0",
-    "dotenv": "^16.0.0"
+    "bs58": "^5.0.0",
+    "dotenv": "^16.0.0",
+    "ethers": "^6.0.0"
   },
   "devDependencies": {
-    "typescript": "^5.0.0",
     "@types/node": "^20.0.0",
-    "ts-node": "^10.0.0",
-    "nodemon": "^3.0.0",
-    "typedoc": "^0.25.0",
     "eslint": "^8.0.0",
-    "prettier": "^3.0.0"
+    "nodemon": "^3.0.0",
+    "prettier": "^3.0.0",
+    "ts-node": "^10.9.2",
+    "typedoc": "^0.25.0",
+    "typescript": "^5.9.3"
   },
   "engines": {
     "node": ">=18.0.0"
