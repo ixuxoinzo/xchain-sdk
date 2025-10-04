@@ -1,3 +1,4 @@
+
 <p align="center">
   <img src="assets/8fx443.jpg" alt="xChain SDK Logo" width="600"/>
 </p>
@@ -256,7 +257,7 @@ Solana
  * Solana Devnet / Testnet support via RPC configuration
 📞 Support
  * GitHub Repository: https://github.com/ixuxoinzo/xchain-sdk
- * Report Issues: Use GitHub Issues
+ * Report an Issue: Open an issue on GitHub
 🙏 Donations Supported
 If you find this SDK useful and would like to support its development, any contributions are greatly appreciated!
  * EVM Chains (ETH, USDC, USDT, etc.):
