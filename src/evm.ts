@@ -117,6 +117,11 @@ const UNISWAP_V3_ROUTER_ABI = [
   "function exactOutput((bytes path, address recipient, uint256 deadline, uint256 amountOut, uint256 amountInMaximum)) external payable returns (uint256 amountIn)"
 ];
 
+const CHAINLINK_PRICE_FEED_ABI = [
+  "function latestRoundData() view returns (uint80 roundId, int256 answer, uint256 startedAt, uint256 updatedAt, uint80 answeredInRound)",
+  "function decimals() view returns (uint8)",
+];
+
 const MULTICALL_ABI = [
   "function aggregate((address target, bytes callData)[] memory calls) public returns (uint256 blockNumber, bytes[] memory returnData)",
   "function tryAggregate(bool requireSuccess, (address target, bytes callData)[] memory calls) public returns (((bool success, bytes returnData))[] memory)"
@@ -1088,6 +1093,22 @@ export class EVMSDK {
       throw new Error(`Multicall failed: ${error}`);
     }
   }
+
+
+  // ========== ORACLE OPERATIONS ==========
+  
+      async getLatestPrice(priceFeedAddress: string): Promise<string> {
+    const contract = new Contract(priceFeedAddress, CHAINLINK_PRICE_FEED_ABI, this.provider);
+    try {
+      const roundData = await contract.latestRoundData();
+      const decimals = await contract.decimals();
+      return ethers.formatUnits(roundData.answer, decimals);
+    } catch (error: any) {
+      console.error(`Failed to get price from Chainlink feed at ${priceFeedAddress}:`, error);
+      throw new Error(`Chainlink price feed failed: ${error.message}`);
+    }
+  }
+
 
   // ========== DEX & SWAP OPERATIONS ==========
   async getSwapQuote(fromToken: string, toToken: string, amount: string, slippage: number = 0.5): Promise<SwapQuote> {

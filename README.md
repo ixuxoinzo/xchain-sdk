@@ -102,91 +102,64 @@ npm run dev
 Example Output
 Running the npm run start command will produce a detailed output in your terminal, demonstrating the SDK's core functionalities:
 ? XCHAIN SDK DEMO - MULTI-CHAIN BLOCKCHAIN OPERATIONS
-1. HYBRID SDK DEMO
+🚀 XCHAIN SDK DEMO - MULTI-CHAIN BLOCKCHAIN OPERATIONS
+1. FRONTEND SDK DEMO
 ==================================================
-⏩  Skipping Frontend Wallet Detection (Node.js environment)
+📱 Detecting wallets in a browser environment...
+   - ⏩  Failed to detect wallets (as expected in a server environment).
 2. BACKEND SDK DEMO
 ==================================================
-🔐 Generated Demo Wallets:
-EVM Address: 0x54363A8eef4230f82AF38B0cFAACc0a0a24f47d3
-EVM Private Key: 0x82f1a9cedf5483c539...
-Solana Address: DV3FViuaD8KYycmU1umqW1ogXmSriLq883EatzF8FEjM
-Solana Private Key: 5qQBspU9EczFDfEwNxMm...
-✅  Backend SDK Initialized:
-EVM Address: 0x54363A8eef4230f82AF38B0cFAACc0a0a24f47d3
-Solana Address: DV3FViuaD8KYycmU1umqW1ogXmSriLq883EatzF8FEjM
-EVM Configured: true
-Solana Configured: true
-3. EVM OPERATIONS DEMO
+✅  Backend SDK initialized successfully:
+   - EVM Address: 0x2f1A25e99517F3052633d2367E18120A67e6b110
+   - Solana Address: 2DXYQkRvrpvaHk1JR4EyUarV6VpVQfCsGunufMmbwpRD
+3. EVM READ OPERATIONS DEMO
 ==================================================
 📍 EVM SDK Info:
-Address: 0x54363A8eef4230f82AF38B0cFAACc0a0a24f47d3
-Current Chain: ETHEREUM
-Network: {
-  chain: 'ETHEREUM',
-  chainId: 1,
-  name: 'Ethereum',
-  rpcUrl: '[https://eth.llamarpc.com](https://eth.llamarpc.com)',
-  explorer: '[https://etherscan.io](https://etherscan.io)',
-  nativeCurrency: { name: 'Ether', symbol: 'ETH', decimals: 18 }
-}
-📊 Read Operations:
-Current Block: 23492225
-Current Gas Price: 0.792025783 GWEI
-Balance: 0.0 ETH
-🔄 Chain Switching:
-✅  POLYGON: 0.0 MATIC
-✅  ARBITRUM: 0.0 ETH
-✅  BASE: 0.0 ETH
-4. SOLANA OPERATIONS DEMO
+   - Address: 0x2f1A25e99517F3052633d2367E18120A67e6b110
+📊 Basic Read Operations:
+   - ETH Balance: 0.0 ETH
+🔄 Chain Switching & Balance Checks:
+   - ✅  POLYGON   : 0.0 MATIC
+   - ✅  ARBITRUM  : 0.0 ETH
+   - ✅  BASE      : 0.0 ETH
+4. SOLANA READ OPERATIONS DEMO
 ==================================================
 📍 Solana SDK Info:
-Address: DV3FViuaD8KYycmU1umqW1ogXmSriLq883EatzF8FEjM
-Public Key: DV3FViuaD8KYycmU1umqW1ogXmSriLq883EatzF8FEjM
+   - Address: 2DXYQkRvrpvaHk1JR4EyUarV6VpVQfCsGunufMmbwpRD
 📊 Solana Read Operations:
-SOL Balance: 0
-Recent Blockhash: CpmQDB5yuy5pMeHVhssG...
-Current Slot: 370762280
-5. MULTICALL OPERATIONS DEMO
+   - SOL Balance: 0
+5. MULTICALL OPERATIONS DEMO (EVM)
 ==================================================
-🧪 Testing Multicall:
-Multicall Results:
-✅  USDT: USDT
-✅  USDC: USDC
-✅  DAI: DAI
-6. HEALTH CHECKS
+🧪 Testing Multicall to fetch token symbols...
+   - Multicall Results:
+     - ✅  USDT: USDT
+     - ✅  USDC: USDC
+6. FULL TRANSACTION HANDLER (EVM - TESTNET)
 ==================================================
-EVM Health: ✅  Healthy
-EVM Latency: 254ms
-EVM Block: 23492225
-Solana Health: ✅  Healthy
-Solana Latency: 10ms
-Solana Slot: 370762282
-7. ERROR HANDLING DEMO
+!!! Warning: This section is DISABLED. Uncomment the code to run on a testnet like Sepolia !!!
+⏩  (To test, uncomment the code and provide a valid testnet recipient address.)
+7. BASIC NFT & DATA UTILITIES (EVM)
 ==================================================
-Testing error handling...
-✅  Error handled properly: Native transfer failed: unconfigured name (value="0xInvalidAddress", code=UNCONFIGURED_NAME, version=6.15.0)
-8. ADVANCED FEATURES
+🧪 Fetching NFT owner...
+✅  Owner of BAYC #8888: 0x6D77F0b4326c8EB55fB1FdA6C9e408C02413f898
+🧪 Fetching NFT URI...
+✅  URI of BAYC #8888: ipfs://QmeSjSinHpPnmXmspMjwiXyN6zS4E9zccariGR3jxcaWtq/8888
+🧪 Attempting to fetch transaction history (Placeholder)...
+⏩  (Transaction history function requires further implementation in the SDK.)
+8. CHAINLINK PRICE ORACLE (EVM)
 ==================================================
-Gas Estimate: 21000
-Fee Data: {
-  gasPrice: '0.792025783',
-  maxFeePerGas: '1.583671641',
-  maxPriorityFeePerGas: '0.000379925'
-}
-🎉 DEMO SUMMARY
+🧪 Fetching current ETH/USD price from Chainlink...
+✅  Current ETH Price: $4671.62
+9. COMPREHENSIVE DOCUMENTATION
 ==================================================
-✅  SDK Initialized Successfully
-✅  Multi-chain Support Working
-✅  Read Operations Functional
-✅  Error Handling Working
-✅  Advanced Features Accessible
-💡 NEXT STEPS:
-1. Use real private keys for actual transactions
-2. Configure RPC endpoints for better performance
-3. Add error handling and retry logic for production
-4. Implement proper security measures for private keys
-🚀 SDK READY FOR PRODUCTION!
+📖 Documentation is key for SDK adoption.
+   - Ensure the README.md on GitHub is complete and up-to-date.
+   - Provide clear usage examples for each function.
+   - Consider creating a Wiki or a dedicated docs website.
+10. HEALTH CHECKS
+==================================================
+   - EVM Health: ✅  Healthy | Latency: 288ms | Block: 23520071
+   - Solana Health: ✅  Healthy | Latency: 20ms | Slot: 371612336
 
 ## 🗺️ Project Roadmap & Vision
 
@@ -200,11 +173,11 @@ The Core SDK is a powerful, reliable, and **free open-source tool** designed to 
 -   ~~**Full Multi-Chain Infrastructure:** Setup for 12+ EVM chains and Solana.~~
 -   ~~**Complete Read Operations:** Fetching native/token balances, reading contract data, multicall, and network health checks.~~
 -   ~~**Wallet Management:** Secure generation and management of wallets.~~
+-   ~~**Basic NFT & Data Utilities:** Adding essential functions for viewing NFTs and fetching transaction history.
+-   ~~ **Chainlink Price Oracle:** Integrating Chainlink price feeds as a high-value, reliable utility for all users.~~
 
 #### **Finalizing for v1.0 Release:**
 -   [🟡] **Full Transaction Handler:** Implementing `sendTransaction` and `executeContract` to complete the core read/write capabilities.
--   [🟡] **Basic NFT & Data Utilities:** Adding essential functions for viewing NFTs and fetching transaction history.
--   [🔵] **Chainlink Price Oracle:** Integrating Chainlink price feeds as a high-value, reliable utility for all users.
 -   [🟡] **Comprehensive Documentation:** Finalizing docs to ensure the Core SDK is easy to adopt.
 
 ---
