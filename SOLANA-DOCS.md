@@ -6,7 +6,7 @@
 # XCHAIN-SDK: Solana Usage Guide
 
 This guide covers interaction with the Solana blockchain using the XCHAIN-SDK. It explains both the simple method using pre-configured instances and the flexible method using the generic `SolanaSDK`.
-
+```
 ## Installation
 
 ```bash
@@ -15,9 +15,9 @@ npm install @ixuxoinzo/xchain-sdk @solana/web3.js @solana/spl-token @metaplex-fo
 yarn add @ixuxoinzo/xchain-sdk @solana/web3.js @solana/spl-token @metaplex-foundation/js bs58 bip39 ed25519-hd-key node-fetch dotenv
 ```
 
-###Importing the SDK
+### Importing the SDK
 Choose the import method based on your needs:
-Method 1: Using Pre-configured Network Instances (Recommended for Simplicity)
+#### Method 1: Using Pre-configured Network Instances (Recommended for Simplicity)
 Import the specific, named instance for the network you need directly from the /solana subpath. This is the simplest way if your application targets only one specific Solana network (mainnet, devnet, or testnet).
 ```typescript
 // Example: Importing the Mainnet instance
@@ -37,7 +37,7 @@ import dotenv from 'dotenv';
 dotenv.config(); // Load environment variables (e.g., SOLANA_PRIVATE_KEY)
 ```
 
-Method 2: Using the Generic SolanaSDK (Flexible)
+#### Method 2: Using the Generic SolanaSDK (Flexible)
 Import the main SolanaSDK class from the package's main entry point. Use this if you need to dynamically choose the network or use a custom RPC URL during runtime.
 import { SolanaSDK, SolanaUtils, type SolanaNetwork, type WalletInfo } from '@ixuxoinzo/xchain-sdk'; // Import from main entry
 import dotenv from 'dotenv';
