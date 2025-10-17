@@ -10,11 +10,15 @@ This guide covers interaction with EVM-compatible blockchains using the XCHAIN-S
 npm install @ixuxoinzo/xchain-sdk ethers dotenv
 # or
 yarn add @ixuxoinzo/xchain-sdk ethers dotenv
+``` 
 
-Importing the SDK
+
+## Importing the SDK
 Choose the import method based on your needs:
 Method 1: Using Pre-configured Chain Instances (Recommended for Single-Chain Focus)
 Import the specific, named instance for the chain you need directly from the /evm subpath. This is the simplest way if your application primarily targets one specific EVM chain.
+
+```typescript
 // Example: Importing the Polygon instance
 import { Polygon } from '@ixuxoinzo/xchain-sdk/evm';
 
@@ -29,22 +33,31 @@ import { type TokenInfo, type TransactionResponse } from '@ixuxoinzo/xchain-sdk'
 
 import dotenv from 'dotenv';
 dotenv.config(); // Load environment variables (e.g., EVM_PRIVATE_KEY)
+```
 
 Method 2: Using the Generic EVMSDK (Flexible, Multi-Chain)
 Import the main EVMSDK class from the package's main entry point. Use this if you need to switch between different EVM chains dynamically or require more control over initialization.
+
+```typescript
 import { EVMSDK, type Chain, type WalletInfo } from '@ixuxoinzo/xchain-sdk';
 import dotenv from 'dotenv';
 dotenv.config(); // Load environment variables like private key
+```
 
-Initialization
+## Initialization
 For Method 1 (Specific Chain Instance):
 These instances (Polygon, Ethereum, etc.) are pre-configured. They typically initialize themselves using a common private key (e.g., process.env.EVM_PRIVATE_KEY) and the correct RPC for their chain. Ensure your .env file contains the necessary EVM_PRIVATE_KEY. No manual instantiation is needed.
+
+```typescript
 // Just import and use. Assumes EVM_PRIVATE_KEY is in .env
 console.log(`Using pre-configured Polygon instance.`);
 console.log(`Wallet Address: ${Polygon.getAddress()}`);
+```
 
 For Method 2 (Generic EVMSDK):
 You must create an instance, providing the private key and the initial chain.
+
+```typescript
 const evmPrivateKey: string = process.env.YOUR_EVM_PRIVATE_KEY || '';
 const initialChain: Chain = 'ETHEREUM'; // Or 'POLYGON', 'ARBITRUM', etc.
 const customRpcUrl?: string = process.env.YOUR_CUSTOM_RPC_URL; // Optional
@@ -57,8 +70,9 @@ const sdkEVM = new EVMSDK(evmPrivateKey, initialChain, customRpcUrl);
 
 console.log(`Generic EVMSDK Initialized for chain: ${sdkEVM.getCurrentChain()}`);
 console.log(`Wallet Address: ${sdkEVM.getAddress()}`);
+```
 
-Core Functionalities
+## Core Functionalities
 The following methods are available on both the generic sdkEVM instance and the specific chain instances (like Polygon, Ethereum).
  * When using specific instances (e.g., Polygon), operations automatically target that chain.
  * When using the generic sdkEVM, operations target the currently active chain (set during initialization or via .switchChain()).
@@ -145,7 +159,9 @@ Advanced Features & Utilities
  * .batchTransferNative(transfers: { to: string; amount: string }[], overrides?: TransactionRequest): Promise<TransactionResponse[]>: Send native tokens to multiple recipients in sequence.
  * .getMultipleBalances(addresses: string[]): Promise<BalanceResult[]>: Get native balances for multiple addresses.
  * .getMultipleTokenBalances(tokenAddress: string, addresses: string[]): Promise<TokenBalance[]>: Get token balances for multiple addresses.
-Example Usage (Recommended: Using Specific Instance)
+
+## Example Usage (Recommended: Using Specific Instance)
+```typescript
 import { Polygon } from '@ixuxoinzo/xchain-sdk/evm'; // Import the desired instance
 import { type TransactionResponse } from '@ixuxoinzo/xchain-sdk';
 import dotenv from 'dotenv';
@@ -174,9 +190,10 @@ async function main() {
 }
 
 main();
-
-Alternative Usage (Generic EVMSDK with switchChain)
+```
+### Alternative Usage (Generic EVMSDK with switchChain)
 This is useful if you need one SDK object to handle multiple chains dynamically.
+```typescript
 import { EVMSDK, type Chain } from '@ixuxoinzo/xchain-sdk';
 import dotenv from 'dotenv';
 dotenv.config();
@@ -196,6 +213,4 @@ async function checkMultiChain() {
 }
 
 checkMultiChain();
-
-
----
+```
