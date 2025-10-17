@@ -13,11 +13,13 @@ This guide covers interaction with the Solana blockchain using the XCHAIN-SDK. I
 npm install @ixuxoinzo/xchain-sdk @solana/web3.js @solana/spl-token @metaplex-foundation/js bs58 bip39 ed25519-hd-key node-fetch dotenv
 # or
 yarn add @ixuxoinzo/xchain-sdk @solana/web3.js @solana/spl-token @metaplex-foundation/js bs58 bip39 ed25519-hd-key node-fetch dotenv
+```
 
-Importing the SDK
+###Importing the SDK
 Choose the import method based on your needs:
 Method 1: Using Pre-configured Network Instances (Recommended for Simplicity)
 Import the specific, named instance for the network you need directly from the /solana subpath. This is the simplest way if your application targets only one specific Solana network (mainnet, devnet, or testnet).
+```typescript
 // Example: Importing the Mainnet instance
 import { Solana } from '@ixuxoinzo/xchain-sdk/solana';
 
@@ -33,6 +35,7 @@ import { type TokenInfo, type SolanaTransaction } from '@ixuxoinzo/xchain-sdk';
 
 import dotenv from 'dotenv';
 dotenv.config(); // Load environment variables (e.g., SOLANA_PRIVATE_KEY)
+```
 
 Method 2: Using the Generic SolanaSDK (Flexible)
 Import the main SolanaSDK class from the package's main entry point. Use this if you need to dynamically choose the network or use a custom RPC URL during runtime.
@@ -40,16 +43,18 @@ import { SolanaSDK, SolanaUtils, type SolanaNetwork, type WalletInfo } from '@ix
 import dotenv from 'dotenv';
 dotenv.config();
 
-Initialization
+## Initialization
 For Method 1 (Specific Network Instance):
 These instances (Solana, SolanaDevnet, SolanaTestnet) are pre-configured. They typically initialize themselves using a common private key found in your environment variables (e.g., process.env.SOLANA_PRIVATE_KEY) and the correct RPC for their network. Ensure your .env file contains the necessary SOLANA_PRIVATE_KEY. No manual instantiation is needed.
+```typescript
 // Just import and use. Assumes SOLANA_PRIVATE_KEY is in .env
 console.log(`Using pre-configured Solana Devnet instance.`);
 // import { SolanaDevnet } from '@ixuxoinzo/xchain-sdk/solana'; // Make sure to import it
 // console.log(`Wallet Address: ${SolanaDevnet.getAddress()}`);
-
+```
 For Method 2 (Generic SolanaSDK):
 You must create an instance, providing the private key and specifying the network.
+```typescript
 const solanaPrivateKey: string | Uint8Array = process.env.YOUR_SOLANA_PRIVATE_KEY || ''; // Base58 string or Uint8Array
 const network: SolanaNetwork = 'devnet'; // 'mainnet', 'devnet', or 'testnet'
 const customRpcUrl?: string = process.env.YOUR_CUSTOM_SOLANA_RPC_URL; // Optional
@@ -62,8 +67,9 @@ const sdkSolana = new SolanaSDK(solanaPrivateKey, network, customRpcUrl);
 
 console.log(`Generic SolanaSDK Initialized for network: ${sdkSolana.getNetwork()}`);
 console.log(`Wallet Address: ${sdkSolana.getAddress()}`);
+```
 
-Core Functionalities (SolanaSDK instance)
+## Core Functionalities (SolanaSDK instance)
 The following methods are available on both the generic sdkSolana instance and the specific network instances (like Solana, SolanaDevnet). When using specific instances, operations target their pre-configured network.
 Wallet Management
  * .getAddress(): string: Get the current wallet address (Base58 string).
@@ -112,8 +118,10 @@ Batch Operations
  * .getMultipleTokenBalances(mint: string, addresses: string[]): Promise<TokenBalance[]>: Get SPL token balances for multiple addresses in parallel.
 Health Check
  * .healthCheck(): Promise<{ healthy: boolean; latency: number; slot: number }>: Check the connectivity and latency to the RPC endpoint.
-Utility Class (SolanaUtils)
+
+## Utility Class (SolanaUtils)
 These are static helper functions that can be called directly without needing a SolanaSDK instance. Import SolanaUtils either from the main package entry or from /solana.
+```typescript
 import { SolanaUtils } from '@ixuxoinzo/xchain-sdk/solana';
 
 const isValid = SolanaUtils.validateAddress('So1111...');
@@ -121,7 +129,7 @@ const short = SolanaUtils.shortAddress('SomeLongAddress...', 6);
 const sol = SolanaUtils.lamportsToSol(1e9);
 const lamports = SolanaUtils.solToLamports(0.5);
 const formatted = SolanaUtils.formatAmount(100 * 1e6, 6); // Format 100 USDC (6 decimals)
-
+```
  * SolanaUtils.validateAddress(address: string): boolean: Check if a string is a valid Solana address format.
  * SolanaUtils.shortAddress(address: string, chars?: number): string: Truncate a Solana address (e.g., AbC...XyZ). chars defaults to 4.
  * SolanaUtils.lamportsToSol(lamports: number): number: Convert lamports to SOL.
@@ -129,14 +137,16 @@ const formatted = SolanaUtils.formatAmount(100 * 1e6, 6); // Format 100 USDC (6 
  * SolanaUtils.formatAmount(amount: number, decimals: number): string: Convert a raw token amount into a human-readable string based on decimals.
  * SolanaUtils.getPythPriceFeeds(): object: Get the map of known Pyth price feed addresses.
  * SolanaUtils.getTokenMappings(): object: Get the map of common token mint addresses (SOL, USDC, USDT, etc.) to their symbols.
-Example Usage (Recommended: Using Specific Instance)
+
+### Example Usage (Recommended: Using Specific Instance)
 // Example using Devnet instance
+```typescript
 import { SolanaDevnet } from '@ixuxoinzo/xchain-sdk/solana';
 import { type SolanaTransferResponse } from '@ixuxoinzo/xchain-sdk';
 import dotenv from 'dotenv';
 dotenv.config();
 
-async function main() {
+ function main() {
   try {
     // Assumes SolanaDevnet instance loads SOLANA_PRIVATE_KEY from .env
     const address = SolanaDevnet.getAddress();
@@ -170,9 +180,11 @@ async function main() {
 }
 
 main();
+```
 
-Alternative Usage (Generic SolanaSDK)
+### Alternative Usage (Generic SolanaSDK)
 This is useful if you need to choose the network dynamically.
+```typescript
 import { SolanaSDK, type SolanaNetwork } from '@ixuxoinzo/xchain-sdk';
 import dotenv from 'dotenv';
 dotenv.config();
@@ -187,5 +199,5 @@ async function checkBalance() {
 }
 
 checkBalance();
-
+```
 
