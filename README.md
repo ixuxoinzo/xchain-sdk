@@ -90,16 +90,34 @@ Follow the link below that corresponds to your immediate goal:
 | Demo Script | Step-by-step guide to running the repository's included demo scripts. | ➡️ [VIEW DEMO-DOCS.md](./DEMO-DOCS.md) |
 
 
-# 🛣️ OFFICIAL PROJECT ROADMAP & VISION
-This project has two distinct phases: the Core SDK (V1.0 is now complete) and the Pro Vision (the future DeFi platform).
-I. xChain SDK - CORE (Stable V1.0 - Complete)
-The Core SDK is a free open-source tool and is now 100% complete as a foundational library.
-| Status | Feature | Notes |
+
+#🛣️ OFFICIAL PROJECT ROADMAP & VISION
+
+## I. XCHAIN SDK - CORE (Stable V2.0.0 - Complete)
+The XChain SDK Core has achieved V2.0.0, completing the fundamental Multi-Chain (EVM & Solana) and comprehensive Transaction Handling layers.
+| Status | Feature (V1.0 - V2.0 Upgrade) | Notes |
 |---|---|---|
-| ✅ | Multi-Chain Infra | Setup for 25+ EVM chains and Solana. |
-| ✅ | Read Operations | Balance checks, contract reads, network health. |
-| ✅ | Full Transaction Handler | COMPLETE: Full implementation of sendTransaction and executeContract for core read/write capabilities. |
-| ✅ | Comprehensive Docs | COMPLETE: All dedicated documentation files are finalized. |
+| ✅ | Multi-Chain Infrastructure | Finalized Setup of 25+ EVM chains and Solana, including RPC failover. |
+| ✅ | Full Transaction Handler | Complete implementation of stable sendTransaction and Contract Write capabilities. |
+| ✅ | Liquidity & NFT Abstraction | Completed integration of DEX (Uniswap V2) and NFT (ERC-721/1155) standards. |
+| ✅ | Hardening & Documentation | Deeper EIP-712 abstraction and finalization of all V2.0.0 documentation. |
+## II. 🚀 PRO VISION: DEFI & SDK AUTOMATION STRENGTHENING (V2.1 - V2.5 Focus)
+The main focus is to maximize the value of the V2.0.0 feature set by implementing advanced DeFi and Automation functionalities internally, boosting product competitiveness.
+### ⚙️ V2 VALUE DEVELOPMENT MILESTONES (EVM & Scalability)
+| Status | Milestone | Key Deliverable |
+|---|---|---|
+| [🟠] Automation V2.1 | Batch Transaction & Scheduling Module | Build service layers on top of batchTransferNative to support Scheduled Batch Transactions and Conditional Transfers for automated processes. |
+| [🟠] DeFi V2.2 | Automated Liquidity Provision (LPM) | Implement a simplified interface over Liquidity Pool Management (LPM) functions (e.g., addLiquidity and removeLiquidity) for supported EVM DEXs. |
+| [🟠] EVM Advanced V2.3 | Account Abstraction (EIP-4337) Support | Implement APIs to interact with bundlers and paymasters, unlocking gasless and smart wallet functionalities on EVM chains. |
+| [🟠] Scalability V2.4 | High-Level Logging & Observability | Extend Error Handling and Logging in the backend to provide the visibility and debuggability necessary for scaling high-volume EVM operations. |
+| [🟠] Expansion V2.5 | New Chain Integration Process | Establish a rapid and well-documented process for adding new EVM chains on-demand as they gain market relevance. |
+## III. 🌉 ULTIMATE VISION & SOLANA EXPANSION (Requires New Funding)
+This phase is isolated and will be activated only after sufficient multi-chain funding is secured.
+ * Solana Expansion: Full development of the Anchor Program Abstraction Layer and other advanced Solana features.
+ * Asset Translator: Development of the Generalized Messaging System to enable "any-to-any" token transfers between EVM and Solana ecosystems.
+### ⭐ CALL TO ACTION: Seeking Funding & Strategic Partners!
+Our current focus is to secure partners who can fund this complex infrastructure. We are prepared to build high value internally until that time comes. Let's connect!
+
 
 ### for the multi-chain world, let's connect!
 ## 🌐 Supported Chains (25+ EVM Networks)
