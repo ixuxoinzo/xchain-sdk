@@ -107,7 +107,7 @@ The Core SDK is a free open-source tool and is now 100% complete as a foundation
 ### EVM Chains
 - Ethereum
 - Optimism
-- Arbitrum One
+- Arbitrum 
 - Base
 - Polygon POS
 - Polygon zkEVM
