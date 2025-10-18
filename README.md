@@ -142,7 +142,7 @@ The Core SDK is a free open-source tool and is now 100% complete as a foundation
 * **GitHub Repository:** [https://github.com/ixuxoinzo/xchain-sdk](https://github.com/ixuxoinzo/xchain-sdk)  
 * **Report Issues:** [Open a GitHub Issue](https://github.com/ixuxoinzo/xchain-sdk/issues)
 
-##🙏 Donations Supported
+## 🙏 Donations Supported
  * EVM Chains (ETH, USDC, USDT, etc.): 0xFBA061EA80d3593e3AF1430ad2050729b59362D9
  * Solana (SOL, USDC, etc.): 9ShXRhekCCnbN9bbQ9wXoq1KCfNQZ4uydXvmC9LPStBZ
 
