@@ -91,7 +91,7 @@ Follow the link below that corresponds to your immediate goal:
 
 
 
-#🛣️ OFFICIAL PROJECT ROADMAP & VISION
+# 🛣️ OFFICIAL PROJECT ROADMAP & VISION
 
 ## I. XCHAIN SDK - CORE (Stable V2.0.0 - Complete)
 The XChain SDK Core has achieved V2.0.0, completing the fundamental Multi-Chain (EVM & Solana) and comprehensive Transaction Handling layers.
