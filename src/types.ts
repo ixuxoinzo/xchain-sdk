@@ -1,6 +1,7 @@
 import { Chain } from './chains';
 
 // ========== COMMON TYPES ==========
+
 export interface TransactionResponse {
   hash: string;
   from: string;
@@ -75,6 +76,7 @@ export interface TokenBalance {
 }
 
 // ========== EVM SPECIFIC TYPES ==========
+
 export interface EVMTransaction {
   hash: string;
   from: string;
@@ -111,13 +113,17 @@ export interface EVMContractDeployment {
 }
 
 // ========== SOLANA SPECIFIC TYPES ==========
+
+export type SolanaNetwork = 'mainnet' | 'testnet' | 'devnet';
+
 export interface SolanaAccountInfo {
   address: string;
   lamports: number;
   owner: string;
   executable: boolean;
-  rentEpoch?: number;
-  data: Uint8Array;
+  rentEpoch: number;
+  dataLength: number;
+  data?: Uint8Array;
 }
 
 export interface SolanaTokenAccount {
@@ -132,11 +138,13 @@ export interface SolanaTokenAccount {
 export interface SolanaTransaction {
   signature: string;
   slot: number;
-  blockTime: number;
-  confirmationStatus: 'processed' | 'confirmed' | 'finalized';
+  blockTime: number | null;
+  confirmationStatus: 'processed' | 'confirmed' | 'finalized' | string;
   err: any;
   memo?: string;
   instructions: any[];
+  fee?: number;
+  logMessages?: string[];
 }
 
 export interface SolanaTokenMetadata {
@@ -165,10 +173,40 @@ export interface SolanaProgramAccount {
   };
 }
 
+export interface SolanaTransferResponse {
+  signature: string;
+  from: string;
+  to: string;
+  amount: number;
+  lamports: number;
+  slot: number;
+  blockTime: number | null;
+  confirmationStatus: 'processed' | 'confirmed' | 'finalized';
+}
+
+export interface SolanaTokenTransferResponse {
+  signature: string;
+  from: string;
+  to: string;
+  mint: string;
+  amount: number;
+  decimals: number;
+  slot: number;
+}
+
+export interface SolanaNFTMintResponse {
+  mint: string;
+  signature: string;
+  metadataUri: string;
+  metadata: any;
+}
+
 // ========== SDK CONFIGURATION TYPES ==========
+
 export interface SDKConfig {
   evmPrivateKey?: string;
   solanaPrivateKey?: string;
+  birdeyeApiKey?: string;
   rpcUrls?: Partial<Record<Chain, string>>;
   timeout?: number;
   maxRetries?: number;
@@ -189,6 +227,7 @@ export interface FrontendConfig {
 }
 
 // ========== RESPONSE TYPES ==========
+
 export interface APIResponse<T = any> {
   success: boolean;
   data?: T;
@@ -206,6 +245,7 @@ export interface PaginatedResponse<T = any> extends APIResponse<T[]> {
 }
 
 // ========== EVENT TYPES ==========
+
 export interface EventListenerOptions {
   eventName: string;
   contractAddress: string;
@@ -219,6 +259,7 @@ export interface Subscription {
 }
 
 // ========== GAS & FEE TYPES ==========
+
 export interface GasPriceData {
   slow: string;
   standard: string;
@@ -237,6 +278,7 @@ export interface FeeData {
 }
 
 // ========== MULTICALL TYPES ==========
+
 export interface MulticallRequest {
   contractAddress: string;
   functionName: string;
@@ -251,6 +293,7 @@ export interface MulticallResponse {
 }
 
 // ========== BRIDGE TYPES ==========
+
 export interface BridgeRoute {
   fromChain: Chain;
   toChain: Chain;
@@ -268,6 +311,7 @@ export interface BridgeQuote {
 }
 
 // ========== DEX TYPES ==========
+
 export interface SwapQuote {
   fromToken: string;
   toToken: string;
@@ -292,6 +336,7 @@ export interface PoolInfo {
 }
 
 // ========== STAKING TYPES ==========
+
 export interface StakingPosition {
   poolAddress: string;
   stakedAmount: string;
@@ -310,6 +355,7 @@ export interface StakingPool {
 }
 
 // ========== PRICE ORACLE TYPES ==========
+
 export interface PriceData {
   token: string;
   price: string;
@@ -320,7 +366,16 @@ export interface PriceData {
   timestamp: number;
 }
 
+export interface SolanaPriceData {
+  symbol: string;
+  price: number;
+  confidence: number;
+  timestamp: number;
+  source: 'pyth' | 'jupiter' | 'birdeye';
+}
+
 // ========== NFT MARKETPLACE TYPES ==========
+
 export interface NFTListing {
   tokenId: number;
   contractAddress: string;
@@ -341,6 +396,7 @@ export interface NFTBid {
 }
 
 // ========== ANALYTICS TYPES ==========
+
 export interface PortfolioValue {
   totalValue: string;
   chains: Record<Chain, string>;
@@ -356,7 +412,18 @@ export interface TransactionHistory {
   limit: number;
 }
 
+export interface SolanaHistoryItem {
+  signature: string;
+  slot: number;
+  blockTime: number | null;
+  confirmationStatus: string;
+  err: any;
+  fee: number;
+  type: 'transfer' | 'token_transfer' | 'program' | 'unknown';
+}
+
 // ========== SECURITY TYPES ==========
+
 export interface SecurityScanResult {
   contractAddress: string;
   risks: string[];
@@ -380,6 +447,7 @@ export interface AuditReport {
 }
 
 // ========== NOTIFICATION TYPES ==========
+
 export interface Notification {
   id: string;
   type: 'transaction' | 'price' | 'security' | 'system';
@@ -391,6 +459,7 @@ export interface Notification {
 }
 
 // ========== BACKUP & RECOVERY TYPES ==========
+
 export interface WalletBackup {
   version: string;
   wallets: WalletInfo[];
@@ -405,6 +474,7 @@ export interface RecoveryPhrase {
 }
 
 // ========== ADVANCED FEATURE TYPES ==========
+
 export interface AutomationRule {
   id: string;
   name: string;
@@ -424,6 +494,7 @@ export interface BatchTransaction {
 }
 
 // ========== CROSS-CHAIN TYPES ==========
+
 export interface CrossChainBalance {
   chain: Chain;
   nativeBalance: string;
@@ -439,7 +510,9 @@ export interface ChainStatus {
   gasPrice: string;
   lastUpdate: number;
 }
+
 // ========== WALLET CONNECTION TYPES ==========
+
 export interface WalletConnection {
   address: string;
   chain: Chain;

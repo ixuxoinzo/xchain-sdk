@@ -118,9 +118,9 @@ export class BackendSDK {
 
   // ========== BATCH OPERATIONS ==========
 
+   // ========== BATCH OPERATIONS ==========
   async getBalancesAllChains(address: string): Promise<BalanceResult[]> {
     const results: BalanceResult[] = [];
-
     // Get EVM balances
     if (this.evmSDK) {
       for (const [chain, config] of Object.entries(CHAINS)) {
@@ -141,24 +141,27 @@ export class BackendSDK {
         }
       }
     }
-
-    // Get Solana balance
+   
     if (this.solanaSDK) {
-      try {
-        const balance = await this.solanaSDK.getBalance(address);
-        results.push({
-          address,
-          balance: balance.toString(),
-          chain: 'SOLANA',
-          symbol: 'SOL'
-        });
-      } catch (error) {
-        console.warn('Failed to get Solana balance:', error);
+      const solanaAddress = this.solanaSDK.getAddress();
+      if (solanaAddress) {
+        try {
+ 
+          const balance = await this.solanaSDK.getBalance(); 
+          results.push({
+            address: solanaAddress,
+            balance: balance.toString(),
+            chain: 'SOLANA',
+            symbol: 'SOL'
+          });
+        } catch (error) {
+          console.warn('Failed to get Solana balance:', error);
+        }
       }
     }
-
     return results;
   }
+
 
   // ========== ADMIN OPERATIONS ==========
 
