@@ -166,5 +166,6 @@ Our current focus is to secure partners who can fund this complex infrastructure
 
 
 📄 License
-MIT License
+[MIT License](LICENSE)
+
 
